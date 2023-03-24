@@ -1,17 +1,17 @@
 ---
-address: localhost
+address: 0.0.0.0
 port: 8444
-etcd.endpoints: [localhost:2379] # etcd endpoints
-etcd.rootpath: cdc
+etcd.endpoints: [10.101.143.170:2379] # etcd endpoints
+etcd.rootpath: cdc_demo
 source:
-  etcd.endpoints: [localhost:2379]  # etcd endpoints
-  etcd.rootpath: by-dev  # etcd rootpath
+  etcd.endpoints: [10.101.143.170:2379]  # etcd endpoints
+  etcd.rootpath: cdc-test-source  # etcd rootpath
   etcd.meta.path: meta  # etcd meta sub path
   defaultPartitionName: _default
   reader.buffer.len: 10
   mqtype: pulsar
   pulsar:
-    address: localhost
+    address: 10.101.152.110
     port: 6650
     web.address:
     web.port: 80
