@@ -1,0 +1,101 @@
+name: Test
+
+on:
+    push:
+        branches:
+        - main
+    pull_request:           
+        branches:
+        - main
+
+jobs:
+    deploy-source-milvus:
+        runs-on: ubuntu-latest
+        steps:
+        - uses: actions/checkout@v2
+        
+        - name: Deploy Source Milvus
+          timeout-minutes: 15
+          shell: bash
+          working-directory: deployment/cluster
+          run: |
+            docker-compose up -d
+            bash ../../scripts/check_healthy.sh
+            docker-compose ps -a
+
+        - name: Creating kind cluster
+          uses: helm/kind-action@v1.2.0
+          
+        - name: Print cluster information
+          run: |
+            kubectl config view
+            kubectl cluster-info
+            kubectl get nodes
+            kubectl get pods -n kube-system
+            helm version
+            kubectl version 
+
+        - name: Deploy Target Milvus
+          timeout-minutes: 15
+          shell: bash
+          working-directory: tests/deployment/target/standalone
+          run: |
+            helm repo add milvus https://milvus-io.github.io/milvus-helm
+            helm repo update
+            helm install --wait --timeout 720s cdc-target milvus/milvus -f standalone-values.yaml;
+            kubectl get pods
+            sleep 20s
+            kubectl get pods
+            kubectl port-forward service/cdc-target-milvus 19531 >/dev/null 2>&1 &
+            sleep 20s
+            # check whether port-forward success
+            nc -vz 127.0.0.1 19531
+        - name: Build CDC
+          timeout-minutes: 15
+          shell: bash
+          working-directory: server
+          run: |
+            docker build -t milvus-cdc:latest .
+
+        - name: Deploy Milvus CDC
+          timeout-minutes: 15
+          working-directory: tests/deployment/milvus-cdc
+          shell: bash
+          run: |
+            docker run -it --name=milvus-cdc -v "${PWD}/configs:/app/configs" -p 8444:8444 milvus-cdc:latest
+
+        - name: Set up Python 3.8
+          uses: actions/setup-python@v2
+          with:
+            python-version: 3.8
+            cache: pip
+           
+        - name: Install dependencies
+          timeout-minutes: 5
+          working-directory: tests
+          run: |
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
+
+        - name: Download data
+          timeout-minutes: 5
+          working-directory: tests/assets/ann_dhf5
+          run: |
+            bash download_data.sh
+
+        - name: Run tests for source milvus
+          timeout-minutes: 15
+          working-directory: tests/scripts
+          run: |
+            python source_recall_test.py --host 127.0.0.1 --port 19530
+
+        - name: Wait for 2 minutes
+          timeout-minutes: 5
+          run: |
+            sleep 120s
+
+        - name: Run tests for source milvus
+          timeout-minutes: 15
+          working-directory: tests/scripts
+          run: |
+            python target_recall_test.py --host 127.0.0.1 --port 19531
