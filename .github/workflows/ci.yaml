@@ -17,7 +17,7 @@ jobs:
         - name: Deploy Source Milvus
           timeout-minutes: 15
           shell: bash
-          working-directory: deployment/cluster
+          working-directory: tests/deployment/upstream/
           run: |
             docker-compose up -d
             bash ../../scripts/check_healthy.sh
@@ -38,7 +38,7 @@ jobs:
         - name: Deploy Target Milvus
           timeout-minutes: 15
           shell: bash
-          working-directory: tests/deployment/target/standalone
+          working-directory: tests/deployment/downstream
           run: |
             helm repo add milvus https://milvus-io.github.io/milvus-helm
             helm repo update
@@ -46,7 +46,7 @@ jobs:
             kubectl get pods
             sleep 20s
             kubectl get pods
-            kubectl port-forward service/cdc-target-milvus 19531 >/dev/null 2>&1 &
+            kubectl port-forward service/cdc-target-milvus 19500:19530 >/dev/null 2>&1 &
             sleep 20s
             # check whether port-forward success
             nc -vz 127.0.0.1 19531
@@ -63,6 +63,8 @@ jobs:
           shell: bash
           run: |
             docker run -it --name=milvus-cdc -v "${PWD}/configs:/app/configs" -p 8444:8444 milvus-cdc:latest
+            sleep 20s
+            curl -X POST http://localhost:8444/cdc -d '{"request_type":"create","request_data":{"milvus_connect_param":{"host":"127.0.0.1","port":19500,"ignore_partition":true,"connect_timeout":10},"collection_infos":[{"name":"sift_128_euclidean_HNSW"}]}}'
 
         - name: Set up Python 3.8
           uses: actions/setup-python@v2
