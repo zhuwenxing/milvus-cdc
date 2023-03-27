@@ -1,9 +1,0 @@
-{
-    "cSpell.words": [
-        "milvusdb"
-    ],
-    "yaml.schemas": {
-        "https://raw.githubusercontent.com/argoproj/argo-workflows/master/api/jsonschema/schema.json": "examples/**/*.yaml",
-        "kubernetes://schema/apps/v1@deployment": "file:///Users/zilliz/workspace/milvus-cdc/deployment/k8s/demo.yaml"
-    }
-}
