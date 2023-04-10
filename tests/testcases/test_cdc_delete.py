@@ -9,12 +9,13 @@ from pymilvus import (
 from base.checker import (
     InsertEntitiesCollectionChecker,
 )
+from base.client_base import TestBase
 
 prefix = "cdc_create_task_"
 client = MilvusCdcClient('http://localhost:8444')
 
 
-class TestCdcDelete(object):
+class TestCdcDelete(TestBase):
     """ Test Milvus CDC delete """
 
     def test_cdc_delete_task(self, upstream_host, upstream_port, downstream_host, downstream_port):

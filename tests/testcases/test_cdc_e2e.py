@@ -10,12 +10,13 @@ from base.checker import (
     InsertEntitiesCollectionChecker,
     InsertEntitiesPartitionChecker,
 )
+from base.client_base import TestBase
 
 prefix = "cdc_e2e_"
 client = MilvusCdcClient('http://localhost:8444')
 
 
-class TestE2E(object):
+class TestE2E(TestBase):
     """ Test Milvus CDC end to end """
 
     def test_cdc_collection(self, upstream_host, upstream_port, downstream_host, downstream_port):

@@ -5,12 +5,13 @@ from api.milvus_cdc import MilvusCdcClient
 from pymilvus import (
     connections
 )
+from base.client_base import TestBase
 
 prefix = "cdc_get_"
 client = MilvusCdcClient('http://localhost:8444')
 
 
-class TestCdcList(object):
+class TestCdcList(TestBase):
     """ Test Milvus CDC end to end """
 
     def test_cdc_list_task(self, upstream_host, upstream_port, downstream_host, downstream_port):
