@@ -111,18 +111,18 @@ class Checker:
         log.info(f"checker {self.__class__.__name__} resume finished")
 
     def wait_running_stop(self, timeout=60):
-        log.info("start to wait running stop")
+        log.info(f"start to wait checker {self.__class__.__name__} running stop")
         t0 = time.time()
         while self._is_running and time.time() - t0 < timeout:
             log.debug(f"is running: {self._is_running}")
             sleep(1)
             if time.time() - t0 > timeout:
-                log.info(f"current status: is running: {self._is_running}, keep running: {self._keep_running}, paused: {self._paused}")
+                log.info(f"current status: checker {self.__class__.__name__} is running: {self._is_running}, keep running: {self._keep_running}, paused: {self._paused}")
                 break
         if self._is_running:
-            log.error("wait running stop timeout")
+            log.error(f"wait checker {self.__class__.__name__} running stop timeout")
         else:
-            log.info("wait running stop finished")
+            log.info(f"wait checker {self.__class__.__name__} running stop finished")
     
     def reset(self):
         self._succ = 0

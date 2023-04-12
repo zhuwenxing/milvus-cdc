@@ -30,6 +30,8 @@ class TestCdcStability(TestBase):
 
     def test_cdc_for_collection_insert_delete_concurrent_after_cdc_task(self, upstream_host, upstream_port, downstream_host, downstream_port, duration_time, task_num):
         connections.connect(host=upstream_host, port=upstream_port)
+        duration_time = int(duration_time)
+        task_num = int(task_num)
         c_name_list = [prefix + datetime.now().strftime('%Y_%m_%d_%H_%M_%S_%f') for i in range(task_num)]
         insert_checker_list = []
         delete_checker_list = []
@@ -106,6 +108,7 @@ class TestCdcStability(TestBase):
                 t0 = time.time()
                 while True and time.time() - t0 < timeout:
                     if c_name in list_collections():
+                        log.info(f"collection {c_name} is created")
                         break
                     time.sleep(1)
                     if time.time() - t0 > timeout:
