@@ -1,5 +1,6 @@
 import time
 import math
+import uuid
 from multiprocessing import Process
 from datetime import datetime
 from utils.util_log import test_log as log
@@ -29,7 +30,7 @@ def divide_time(total_time, num_segments=10):
 def get_count_by_query(host, port, c_name):
     from pymilvus import connections
     from pymilvus import Collection
-    connections.connect(host=host, port=port)
+    connections.connect(alias=f"{uuid.uuid1()}", host=host, port=port)
     timeout = 60
     t0 = time.time()
     while True and time.time() - t0 < timeout:
