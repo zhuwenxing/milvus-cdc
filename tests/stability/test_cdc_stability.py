@@ -103,8 +103,4 @@ class TestCdcStability(TestBase):
             delete_checker = DeleteEntitiesCollectionChecker(host=upstream_host, port=upstream_port, c_name=c_name)
             delete_checker.run()
             delete_checker_list.append(delete_checker)
-        for c_name in c_name_list:
-            p = Process(target=get_count_by_query, args=(downstream_host, downstream_port, c_name))
-            p.start()
-            p.join()
         time.sleep(duration_time)

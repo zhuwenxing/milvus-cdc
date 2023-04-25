@@ -323,7 +323,6 @@ class InsertEntitiesCollectionChecker(Checker):
                     self._is_running = False
                 log.info(f"is running: {self._is_running}")
                 sleep(1)
-            sleep(1)
 
 class InsertEntitiesPartitionChecker(Checker):
     def __init__(self, host, port, name_prefix="cdc_insert_partition_test", c_name="cdc_test", p_name="cdc_insert_partition_test"):
@@ -355,7 +354,6 @@ class InsertEntitiesPartitionChecker(Checker):
                     sleep(1)
                 if self._paused or not self._keep_running:
                     self._is_running = False
-            sleep(1)
 
 class DeleteEntitiesCollectionChecker(Checker):
     def __init__(self, host, port, name_prefix="", c_name="cdc_insert_collection_test"):
@@ -382,7 +380,6 @@ class DeleteEntitiesCollectionChecker(Checker):
                     sleep(1)
                 if self._paused or not self._keep_running:
                     self._is_running = False
-            sleep(1)
 
 
 class DeleteEntitiesPartitionChecker(Checker):
