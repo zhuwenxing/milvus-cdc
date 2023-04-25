@@ -37,8 +37,8 @@ jobs:
         with:
           name: milvus-cdc-linux
           path: |
-            dist/milvus-cdc*
-            dist/checksums.txt
+            server/dist/milvus-cdc*
+            server/dist/checksums.txt
 
   build-darwin-binary:
     runs-on: macos-latest
