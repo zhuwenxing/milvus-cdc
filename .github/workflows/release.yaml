@@ -111,10 +111,15 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_TOKEN }}
+      - name: Build and push docker image
+        run: |
+          tag=$(git tag --sort=-version:refname | head -1)
+          docker build -t wxzhu125/milvus-cdc:$tag -t wxzhu125/milvus-cdc:latest .
+          docker push wxzhu125/milvus-cdc:$tag
+          docker push wxzhu125/milvus-cdc:latest
       - name: Release
         uses: goreleaser/goreleaser-action@v4
         with:
-          workdir: ./server
           args: release --clean --config .goreleaser.yaml
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
