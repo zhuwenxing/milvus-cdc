@@ -46,10 +46,9 @@ def get_count_by_query(host, port, c_name):
         col.create_index(field_name="float_vector",
                         index_params={"index_type": "IVF_FLAT", "metric_type": "L2", "params": {"nlist": 128}})
     col.load()
-    while True:
-        count_by_query_downstream = len(col.query(expr="int64 >= 0", output_fields=["int64"]))
-        log.info(f"count_by_query_downstream: {count_by_query_downstream}")
-        time.sleep(60)
+    count_by_query = len(col.query(expr="int64 >= 0", output_fields=["int64"]))
+    log.info(f"count_by_query: {count_by_query}")
+    return count_by_query
 
 
 class TestCdcStability(TestBase):
@@ -104,3 +103,28 @@ class TestCdcStability(TestBase):
             delete_checker.run()
             delete_checker_list.append(delete_checker)
         time.sleep(duration_time)
+        # stop the insert checker and delete checker
+        for checker in insert_checker_list:
+            checker.terminate()
+        for checker in delete_checker_list:
+            checker.terminate()
+
+        time.sleep(60)
+        
+        # check the number entities in upstream
+        cnt_upstream = {}
+        for i in range(task_num):
+            c_name = c_name_list[i]
+            cnt_upstream[c_name] = get_count_by_query(upstream_host, upstream_port, c_name)
+        log.info(f"cnt_upstream: {cnt_upstream}")
+        cnt_downstream = {}
+        for i in range(task_num):
+            c_name = c_name_list[i]
+            cnt_downstream[c_name] = get_count_by_query(downstream_host, downstream_port, c_name)
+        log.info(f"cnt_downstream: {cnt_downstream}")
+        for i in range(task_num):
+            c_name = c_name_list[i]
+            assert cnt_upstream[c_name] == cnt_downstream[c_name]
+
+            
+
