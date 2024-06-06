@@ -31,6 +31,7 @@ jobs:
            bash build_image.sh
            BRANCH=$(git symbolic-ref --short HEAD)
            COMMIT_ID=$(git rev-parse --short HEAD)
+           docker tag milvus-cdc:${BRANCH}-${COMMIT_ID} wxzhu125/milvus-cdc:${BRANCH}-${COMMIT_ID}
            docker push wxzhu125/milvus-cdc:${BRANCH}-${COMMIT_ID}
             
 
