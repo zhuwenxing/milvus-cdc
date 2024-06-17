@@ -29,10 +29,22 @@ jobs:
            bash build_image.sh
            BRANCH=$(git symbolic-ref --short HEAD)
            COMMIT_ID=$(git rev-parse --short HEAD)
-           docker tag milvus-cdc:${BRANCH}-${COMMIT_ID} ${{ secrets.DOCKER_USER }}/milvus-cdc:${BRANCH}-${COMMIT_ID}
-           docker push ${{ secrets.DOCKER_USER }}/milvus-cdc:${BRANCH}-${COMMIT_ID}
-           docker tag milvus-cdc:${BRANCH}-${COMMIT_ID} ${{ secrets.DOCKER_USER }}/milvus-cdc:${BRANCH}-latest
-           docker push ${{ secrets.DOCKER_USER }}/milvus-cdc:${BRANCH}-latest
+          #  docker tag milvus-cdc:${BRANCH}-${COMMIT_ID} ${{ secrets.DOCKER_USER }}/milvus-cdc:${BRANCH}-${COMMIT_ID}
+          #  docker push ${{ secrets.DOCKER_USER }}/milvus-cdc:${BRANCH}-${COMMIT_ID}
+          #  docker tag milvus-cdc:${BRANCH}-${COMMIT_ID} ${{ secrets.DOCKER_USER }}/milvus-cdc:${BRANCH}-latest
+          #  docker push ${{ secrets.DOCKER_USER }}/milvus-cdc:${BRANCH}-latest
+        - name: Log in to GitHub Container Registry
+          uses: docker/login-action@v2
+          with:
+            registry: ghcr.io
+            username: ${{ github.repository_owner }}
+            password: ${{ secrets.GITHUB_TOKEN }}
+        - name: Build and push docker image to GitHub Container Registry
+          run: |
+            docker tag milvus-cdc:${BRANCH}-${COMMIT_ID} ghcr.io/${{ github.repository_owner }}/milvus-cdc:${BRANCH}-${COMMIT_ID}
+            docker push ghcr.io/${{ github.repository_owner }}/milvus-cdc:${BRANCH}-${COMMIT_ID}
+            docker tag milvus-cdc:${BRANCH}-${COMMIT_ID} ghcr.io/${{ github.repository_owner }}/milvus-cdc:${BRANCH}-latest
+            docker push ghcr.io/${{ github.repository_owner }}/milvus-cdc:${BRANCH}-latest
 
 
 
