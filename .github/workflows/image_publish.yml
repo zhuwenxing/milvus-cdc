@@ -41,6 +41,8 @@ jobs:
             password: ${{ secrets.GITHUB_TOKEN }}
         - name: Build and push docker image to GitHub Container Registry
           run: |
+            BRANCH=$(git symbolic-ref --short HEAD)
+            COMMIT_ID=$(git rev-parse --short HEAD)
             docker tag milvus-cdc:${BRANCH}-${COMMIT_ID} ghcr.io/${{ github.repository_owner }}/milvus-cdc:${BRANCH}-${COMMIT_ID}
             docker push ghcr.io/${{ github.repository_owner }}/milvus-cdc:${BRANCH}-${COMMIT_ID}
             docker tag milvus-cdc:${BRANCH}-${COMMIT_ID} ghcr.io/${{ github.repository_owner }}/milvus-cdc:${BRANCH}-latest
