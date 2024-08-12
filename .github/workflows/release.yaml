@@ -28,7 +28,7 @@ jobs:
           # either 'goreleaser' (default) or 'goreleaser-pro':
           distribution: goreleaser
           workdir: ./server
-          version: latest
+          version: '~> v2'
           args: release --skip publish --config .goreleaser-linux.yaml
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
@@ -57,7 +57,7 @@ jobs:
           # either 'goreleaser' (default) or 'goreleaser-pro':
           distribution: goreleaser
           workdir: ./server
-          version: latest
+          version: '~> v2'
           args: release --skip publish --config .goreleaser-darwin.yaml
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
@@ -110,6 +110,7 @@ jobs:
       - name: Release
         uses: goreleaser/goreleaser-action@v6
         with:
+          version: '~> v2'
           args: release --clean --config .goreleaser.yaml
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
