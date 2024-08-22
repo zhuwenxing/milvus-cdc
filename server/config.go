@@ -34,6 +34,7 @@ type CDCServerConfig struct {
 	MaxNameLength   int
 	Retry           config.RetrySettings
 	LogLevel        string
+	DetectDeadLock  bool
 }
 
 type CDCMetaStoreConfig struct {
@@ -56,6 +57,7 @@ type MilvusSourceConfig struct {
 	ReadChanLen          int
 	TimeTickInterval     int
 	DefaultPartitionName string
+	ReplicateChan        string
 	Pulsar               config.PulsarConfig
 	Kafka                config.KafkaConfig
 }
